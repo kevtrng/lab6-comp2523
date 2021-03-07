@@ -1,10 +1,8 @@
-const express = require('express');
-const expressLayouts = require('express-ejs-layouts');
-const { MemoryStore } = require('express-session');
-const session = require('express-session');
-const path = require('path');
+const express = require("express");
+const expressLayouts = require("express-ejs-layouts");
+const session = require("express-session");
+const path = require("path");
 const port = process.env.port || 8000;
-const result = require('dotenv').config();
 
 const app = express();
 
@@ -24,9 +22,9 @@ app.use(
 );
 
 const passport = require("./middleware/passport");
+const ghPassport = require("./middleware/ghPassport");
 const authRoute = require("./routes/authRoute");
 const indexRoute = require("./routes/indexRoute");
-const { connect } = require('./routes/authRoute');
 
 // Middleware for express
 app.use(express.json());
@@ -34,17 +32,19 @@ app.use(expressLayouts);
 app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(ghPassport.initialize());
+app.use(ghPassport.session());
 
 app.use((req, res, next) => {
+	console.log("===========================");
   console.log(`User details are: `);
   console.log(req.user);
-  console.log(Object.keys(JSON.parse(JSON.stringify(req.sessionStore.sessions))));
-  console.log('Entire session object:');
+
+  console.log("Entire session object:");
   console.log(req.session);
-  session.all;
+
   console.log(`Session details are: `);
   console.log(req.session.passport);
-  console.log(req.sessionID);
   next();
 });
 
